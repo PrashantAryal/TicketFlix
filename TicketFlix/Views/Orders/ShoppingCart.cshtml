@@ -1,0 +1,125 @@
+﻿@using TicketFlix.Data.ViewModels
+@model ShoppingCartVM
+
+@{
+    ViewData["Title"] = "Shopping cart summary";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://khalti.s3.ap-south-1.amazonaws.com/KPG/dist/2020.12.17.0.0.0/khalti-checkout.iffe.js"></script>
+</head>
+<body>
+    <div class="row">
+        <div class="col-md-8 offset-2">
+            <div class="text-center">
+                <h2 class="text-center">Your shopping cart summary</h2>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Selected amount</th>
+                        <th>Movie</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ShoppingCart.ShoppingCartItems)
+                    {
+                        <tr>
+                            <td class="align-middle">@item.Amount</td>
+                            <td class="align-middle">@item.Movie.Name</td>
+                            <td class="align-middle">@item.Movie.Price.ToString("Rs 0.00")</td>
+                            <td class="align-middle">@((item.Amount * item.Movie.Price).ToString("Rs 0.00"))</td>
+                            <td class="align-middle">
+                                <a class="text-danger" asp-controller="Orders" asp-action="RemoveItemFromShoppingCart"
+                               asp-route-id="@item.Movie.Id">
+                                    <i class="bi bi-cart-dash"></i>
+                                </a>
+                                |
+                                <a class="text-success" asp-controller="Orders" asp-action="AddItemToShoppingCart"
+                               asp-route-id="@item.Movie.Id">
+                                    <i class="bi bi-cart-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="2"></td>
+                        <td><b>Total:</b></td>
+                        <td>
+                            @Model.ShoppingCartTotal.ToString("Rs 0.00")
+                        </td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="text-center">
+                <div class="btn-group">
+                    <button onclick="showKhaltiCheckout()" class="btn btn-outline-success">
+                        Pay with Khalti
+                    </button>
+ 
+                        <a class="btn btn-outline-success" asp-controller="Movies" asp-action="Index">
+                        Add more items
+                        </a>
+       
+                    
+                </div>
+            </div>
+
+            <div id="khalti-btn"></div>
+        </div>
+    </div>
+
+    <script>
+        var config = {
+            // replace the publicKey with yours
+            "publicKey": "test_public_key_8f4a43a74b00424bbaf87ad72820b3b5",
+            "productIdentity": "11",
+            "productName": "Dragon",
+            "productUrl": "http://gameofthrones.wikia.com/wiki/Dragons",
+            "paymentPreference": [
+                "KHALTI",
+                "EBANKING",
+                "MOBILE_BANKING",
+                "CONNECT_IPS",
+                "SCT",
+            ],
+            "eventHandler": {
+                onSuccess(payload) {
+                    // hit merchant api for initiating verification
+                    console.log(payload);
+                  //  window.location.href = "/Orders/OrderCompleted";
+                    var url = '@Url.Action("CompleteOrder", "Orders", new { })';
+                    window.location.href = url;
+
+                   
+                },
+                onError(error) {
+                    console.log(error);
+                },
+                onClose() {
+                    console.log('widget is closing');
+                }
+            }
+        };
+
+        var checkout = new KhaltiCheckout(config);
+
+        function showKhaltiCheckout() {
+            var totalAmount = @Model.ShoppingCartTotal * 100; // Convert total amount to paisa
+            checkout.show({ amount: totalAmount });
+        }
+
+       
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+﻿@*Defining the model*@
+@model Cinema
+
+@*Defining the view data for Title*@
+@{
+    ViewData["Title"] = "Add New Cinema";
+}
+<div class="row text">
+    <div class="col-md-8 offset-2">
+        <p>
+            <h1 class="text-center">Add a New Cinema</h1>
+        </p>
+        <div class="row ">
+            <div class="col-md-8 offset-2">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    @*for profile picture preview after inserting url*@
+                    <div class="form-group text-center">
+                        <img id="DisplayPhotoPreview" class="rounded-circle" style="max-width:150px" />
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label asp-for="Logo" class="control-label"></label>
+                        <input asp-for="Logo" class="form-control" />
+                        @*creating span incase validation is wrong*@
+                        <span asp-validation-for="Logo" class="text-danger"></span>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        @*creating span incase validation is wrong*@
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        @*creating span incase validation is wrong*@
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <br />
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-outline-success float-right" />
+                        <a class="btn btn-outline-secondary float-end" asp-action="Index">Show All</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@*JQuery code*@
+@section Scripts{
+    <script>
+        //if the validation is shown, the image dissappear so
+        $(document).ready(function () {
+            var output = document.getElementById('DisplayPhotoPreview');
+            output.src = $("#Logo").val();
+        })
+
+        $("#Logo").on("change", function () {
+            var output = document.getElementById('DisplayPhotoPreview');
+            output.src = $(this).val();
+        })
+    </script>
+}
