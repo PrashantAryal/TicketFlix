@@ -12,8 +12,10 @@ namespace TicketFlix.Data.ViewModels
             [Required(ErrorMessage = "Email address is required")]
             public string? EmailAddress { get; set; }
 
+            
             [Required]
             [DataType(DataType.Password)]
+            [RegularExpression(@"^(?=.*[A-Z])(?=.*\W).+$", ErrorMessage = "Password must include an Uppercase letter and a special character")]
             public string? Password { get; set; }
 
             [Display(Name = "Confirm password")]
